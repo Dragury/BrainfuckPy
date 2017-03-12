@@ -31,7 +31,7 @@ class BrainfuckInterpreter(object):
             i += 1
 
     def run(self):
-        print("-= {NAME} OUTPUT START =-".format(NAME=str.upper(self.__program)))
+        print("-= {NAME} OUTPUT START =-\n".format(NAME=str.upper(self.__program)))
         try:
             while self.__running:
                 self.process_instruction()
@@ -40,7 +40,9 @@ class BrainfuckInterpreter(object):
             print(self.__program_counter)
             print(self.__mem)
             print(self.__program_code)
-        print("-=: {NAME} OUTPUT END :=-".format(NAME=str.upper(self.__program)))
+        except KeyboardInterrupt:
+            pass
+        print("\n-=: {NAME} OUTPUT END :=-".format(NAME=str.upper(self.__program)))
 
     def process_instruction(self):
         # End of program reached
@@ -67,15 +69,21 @@ class BrainfuckInterpreter(object):
         elif instr == '+':
             if self.__verbose:
                 print("INCREMENT MEMORY AT LOCATION {pointer}".format(pointer=self.__pointer))
-            self.__mem[self.__pointer] += 1
+            if self.__mem[self.__pointer] == 255:
+                self.__mem[self.__pointer] = 0
+            else:
+                self.__mem[self.__pointer] += 1
         elif instr == '-':
             if self.__verbose:
                 print("DECREMENT MEMORY AT LOCATION {pointer}".format(pointer=self.__pointer))
-            self.__mem[self.__pointer] -= 1
+            if self.__mem[self.__pointer] == 0:
+                self.__mem[self.__pointer] = 255
+            else:
+                self.__mem[self.__pointer] -= 1
         elif instr == ',':
             if self.__verbose:
                 print("GET INPUT FOR MEMORY AT LOCATION {pointer}".format(pointer=self.__pointer))
-            self.__mem[self.__pointer] = sys.stdin.read(1)
+            self.__mem[self.__pointer] = ord(sys.stdin.read(1))
         elif instr == '.':
             if self.__verbose:
                 print("OUTPUT MEMORY AT LOCATION {pointer}".format(pointer=self.__pointer))
