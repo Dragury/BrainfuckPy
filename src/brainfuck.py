@@ -93,15 +93,26 @@ class BrainfuckInterpreter(object):
                 self.__program_counter += 1
                 if self.__verbose:
                     print("START CONDITIONAL LOOP")
+                    if self.__loud:
+                        print("RUNNING LOOP BECAUSE MEMORY AT {pointer} IS {data}".format(
+                            pointer=self.__pointer,
+                            data=self.__mem[self.__pointer]
+                        ))
                 depth = 0
                 while depth > 0 or self.__program_code[self.__program_counter] != ']':
                     instr = self.__program_code[self.__program_counter]
+                    if self.__loud:
+                        print("--------------------------------")
+                        print("INSTR            ->   {instr}".format(instr=instr))
+                        print("PROGRAM COUNTER  ->   {pc}".format(pc=self.__program_counter))
+                        print("DEPTH            ->   {d}".format(d=depth))
                     if instr == '[':
                         depth += 1
                     elif instr == ']':
                         if depth == 0:
                             break
                         depth -= 1
+                    #skip past the [ to make sure it doesn't traverse back
                     self.__program_counter += 1
                 if self.__verbose:
                     print("END LOOP")
@@ -132,6 +143,7 @@ class BrainfuckInterpreter(object):
                     self.__program_counter -= 1
                 if self.__verbose:
                     print("START OF LOOP REACHED")
+                #Go back before the [ to make sure that it is executed
                 self.__program_counter -= 1
             pass
         self.__program_counter += 1
